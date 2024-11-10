@@ -18,12 +18,12 @@ if [[ -f "./packages" ]]; then
 
   packages=$(cat ./packages)
   # storing the content of the "packages" file to the variable packages.
-  # cat ./packages reads the contents in the file "packages".
-
-  echo "installing $packages"
-  # Output the name of the package being installed 
-
-  pacman -S --noconfirm --needed $package
+  # cat ./packages reads the contents in the file "packages". 
+  
+  echo "Installing" $packages
+  # Output the packages being installed
+  
+  pacman -S --noconfirm --needed $packages
   # Installs the packages stored in the variable "packages".
   # pacman -S installs the packages in the $package variable.[2]
   # --noconfirm ignores the confirmation message the system ask when installing the packages.[2]
