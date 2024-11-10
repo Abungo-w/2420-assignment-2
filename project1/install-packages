@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#storing the name of the packages from the packages file in the variable "packages"
+packages=$(cat /home/arch/2420-assignment-2/project1/packages)
+
+#prints out the name of the packages stored in the variable "packages
+echo $packages
+
+#installs the packages stored in the variable "packages"
+pacman -S $packages
