@@ -1,8 +1,16 @@
 #!/bin/bash
 
+#: Filename     : config-file
+#: Description  : Runs "sym-links" and "install-package" file 
+#: Author       : Hai Wu
+#: Date         : Nov 09 2024
+#: Version      : 1.0
+
+#:Refernces:
+
+
 #cloning the example configuration files on github
 git clone git@github.com:Abungo-w/2420-assignment-2.git
 
-user=$1
 
 

@@ -1,17 +1,38 @@
 #!/bin/bash
 
-#:Filename    : install-packages
-#:Description : Install packages listed in the "packages" text file
-#:Author      : Hai Wu
-#:Date        : Nov 08 2024
+#: Filename     : install-packages
+#: Description  : Install packages listed in the "packages" text file
+#: Author       : Hai Wu
+#: Date         : Nov 08 2024
+#: Version      : 1.0
+
+#: Refernces :
+# [1]https://devhints.io/bash#conditionals
+# [2]https://wiki.archlinux.org/title/Pacman
 
 
+if [[ -f "./packages" ]]; then
+# Using a if statment to check if the "packages" file exist or not.
+# -f check if "packages is a file or not.[1]
+# ./packages is the file we want to check.
 
-#storing the name of the packages from the packages file in the variable "packages"
-packages=$(cat ./packages)
+  packages=$(cat ./packages)
+  # storing the content of the "packages" file to the variable packages.
+  # cat ./packages reads the contents in the file "packages".
 
-#prints out the name of the packages being installed 
-echo "installing $packages"
+  echo "installing $packages"
+  # Output the name of the package being installed 
+
+  pacman -S --noconfirm --needed $package
+  # Installs the packages stored in the variable "packages".
+  # pacman -S installs the packages in the $package variable.[2]
+  # --noconfirm ignores the confirmation message the system ask when installing the packages.[2]
+  # --needed avoides reinstallating the existing packages.[2]
+else
+  echo "The packages file does not exist. Need a file named "packages"."
+  # Output an error message
   
-#installs the packages stored in the variable "packages"
-pacman -S $packages
+  exit 1
+  # Ends the script
+fi
+  
