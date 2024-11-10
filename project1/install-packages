@@ -1,10 +1,17 @@
 #!/bin/bash
 
+#:Filename    : install-packages
+#:Description : Install packages listed in the "packages" text file
+#:Author      : Hai Wu
+#:Date        : Nov 08 2024
+
+
+
 #storing the name of the packages from the packages file in the variable "packages"
-packages=$(cat /home/arch/2420-assignment-2/project1/packages)
+packages=$(cat ./packages)
 
-#prints out the name of the packages stored in the variable "packages
-echo $packages
-
+#prints out the name of the packages being installed 
+echo "installing $packages"
+  
 #installs the packages stored in the variable "packages"
 pacman -S $packages
