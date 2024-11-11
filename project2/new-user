@@ -199,7 +199,10 @@ if [[ ! -z $groups ]]; then
       sed -i "/^${group_name}:/ s/$/,${username}/" /etc/group
       # using sed to edit the text in the file /etc/group.[9]
       # -i edit the file in place without printing to the console.[9]
-      # "s/$group_name/$group_name,$username/" finds the $group_name and replaces the $group_name with $group_name,$username.[9]
+      #  "/^${group_name}:/ s/$/,${username}/" finds the $group_name and replaces the end with ,$username.[9]
+      #  s Stands for substitute.[9]
+      #  $ stands for end of the line.[9]
+      #  ,${username} is the replacement text.[9]
       # /etc/group is the file we are editing.[9]
       echo "Adding user ${username} to group ${group_name}."
     fi
