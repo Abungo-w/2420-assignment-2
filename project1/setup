@@ -1,0 +1,101 @@
+#!/bin/bash
+
+#: Filename     : setup
+#: Description  : This script sets up and runs the "install-packages" and "sym-links" scripts.
+#: Author       : Hai Wu
+#: Date         : Nov 09 2024
+#: Version      : 1.0
+
+#: References :
+# [1]https://www.cyberciti.biz/tips/shell-root-user-check-script.html
+# [2]https://devhints.io/bash#conditionals
+
+### Variables ###
+
+username=$(whoami | awk '{print $1}')
+# Storing the user's username to the username variable.
+
+### Error handling ###
+
+if [[ "$EUID" -ne 0 ]]; then
+# This statment checks if this shell script is being run as the root user or not.[1]
+# "$EUID" is a built-in variable in Bash that holds the Effective User ID of the current user.[1]
+# -ne checks if Effective User ID is not equal to 0 then outputs an error message.[2]
+# 0 is the root user ID
+  echo "Please run this script with sudo privilege"
+  # Error message
+  exit 1
+  # Ends the script
+fi
+
+if [[ -z $1 ]]; then
+# This statment checks if the user have provide an argument for the options in the script
+# -z $1 checks if the first argument is empty. If it is, outputs an error message.[2]
+  echo "You need to provide an option. Enter the command ./setup -h for help"
+  # Error message
+  exit 1
+  # Ends the script
+fi
+
+if [[ $# -gt 1 ]]; then
+# This statment checks if the user have provide more than the required arguments for the options in the script.
+# $# number of positional parameters.
+# -gt 1 checks if $# is greater than 1. If it is, output an error message.[2]
+  echo "You can not give more than 1 positional parameters. Enter the command ./setup -h for help."
+  exit 1
+  # Ends the script.
+fi
+
+
+### Help options ###
+help() {
+  echo ""
+  echo "*** Commands for ./setup script ***"
+  echo ""
+  echo "Format: ./setup [Option(s)]"
+  echo ""
+  echo "Options:"
+  echo ""
+  echo "-i    Installs packages from the ./packages file."
+  echo ""
+  echo "-l    Clones the configuration file and create symbolic links." 
+  echo ""
+  echo "-h    Output the help menu"
+  echo ""
+  echo "Instructions: Run the script by inputing the command './setup -il' or 'sudo ./setup -il' if are not the root user for a full setup."
+  exit 0
+  # Ends the script with no error
+}
+
+
+while getopts "il:h" opt; do
+  case "${opt}" in
+    i) 
+      # The i option runs the ./install-packages script which installs a list of packages from the ./packages file
+      ./install-packages
+      ;;
+    l) 
+      # The l option runs the ./sym-links script with a argument to passed in the user's username which is used to clone the configuration file from a repository and set up the symbolic links for the configuration files.
+      ./sym-links $username
+      ;;
+    h) 
+      # The h option will output the help message to show user the options for this script.
+      help
+      ;;
+    *)
+      # If user inputs options that doesn't exist. Output an Error message.
+      echo "Error: The option you provided doesn't exist. Enter the command ./setup -h for help"
+      exit 1
+      # Ends the script
+      ;;
+  esac
+done
+
+exit 0
+# Ends the script
+
+
+
+    
+
+
