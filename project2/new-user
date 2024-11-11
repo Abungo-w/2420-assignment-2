@@ -7,7 +7,67 @@
 #: Version      : 1.0
 
 #: References :
+# [1]https://www.cyberciti.biz/tips/shell-root-user-check-script.html
+# [2]https://devhints.io/bash#conditionals
+
+### variables ###
+
+shell="/bin/bash"
+# the defualt shell variable
+
+group="wheel"
+# the defualt group variable
 
 
 ### Error handling ###
+
+if [[ "$EUID" -ne 0 ]]; then
+# This statment checks if this shell script is being run as the root user or not.[1]
+# "$EUID" is a built-in variable in Bash that holds the Effective User ID of the current user.[1]
+# -ne checks if Effective User ID is not equal to 0 then outputs an error message.[2]
+# 0 is the root user ID
+  echo "Please run this script with sudo privilege"
+  # Error message
+  exit 1
+  # Ends the script
+fi
+
+if [[ -z $1 ]]; then
+# This statment checks if the user have provide an argument for the options in the script
+# -z $1 checks if the first argument is empty. If it is, outputs an error message.[2]
+  echo "You need to provide an option. Enter the command ./new-user -h for help"
+  # Error message
+  exit 1
+  # Ends the script
+fi
+
+
+### Help options ###
+
+help() {
+# This function outputs a list of options for the ./new-user script.
+  echo ""
+  echo "*** Commands for ./new-user script ***"
+  echo ""
+  echo "Format: ./new-user [Option(s)]"
+  echo ""
+  echo "Options:"
+  echo ""
+  echo "-u <username>   A username for the new user."
+  echo ""
+  echo "-s <shell>      The default shell for the new user" 
+  echo ""
+  echo "-g              Add additional group for the new user"
+  echo ""
+  echo "-h    Outputs the help menu"
+  echo ""
+  echo "Instructions: Run the script by inputing the command './new-user -il' or 'sudo ./new-user -il' if are not the root user for a full setup."
+  exit 0
+  # Ends the script with no error
+}
+
+
+### Main script ###
+
+while getopts ":
 
