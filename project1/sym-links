@@ -40,8 +40,8 @@ fi
 ### Main script ###
 
 
-for file in /home/$username/config-files-repo/; do
-  base="${base##*/}"
+for file in /home/$username/config-files-repo/*; do
+  base="${file##*/}"
   echo "$base"
 done
 

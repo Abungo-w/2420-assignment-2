@@ -9,14 +9,14 @@
 #: References :
 # [1]https://www.cyberciti.biz/tips/shell-root-user-check-script.html
 # [2]https://devhints.io/bash#conditionals
+# [3]https://stackoverflow.com/questions/3522341/identify-user-in-a-bash-script-called-by-sudo
 
 ### Variables ###
 
-username=$(whoami | awk '{print $1}')
-# Storing the user's username to the username variable.
-# whoami retrieves the information of the current user logged in
-# awk processes the info retrieved from whoami
-# awk '{print $1}' prints the first output from whoami, which is the username.
+username=${SUDO_USER}
+# Storing the user's username to the username variable.[3]
+# ${SUDO_USER} gets the original user's username when running a script with sudo.[3]
+
 
 ### Error handling ###
 
