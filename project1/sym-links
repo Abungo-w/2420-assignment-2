@@ -9,17 +9,20 @@
 #: References :
 # [1]https://devhints.io/bash#conditionals
 # [2]https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+# [3]https://stackoverflow.com/questions/1951742/how-can-i-symlink-a-file-in-linux
 
 ### Variables ###
 
 username=$1
 # Storing the first argument passed into this script in the username variable
 # Using the ./setup script will automatically pass in the user's username as the first argument to this script.
+dir=/home/$username/config-files-repo/*
+#storing the config-files-repo directory in the dir variable
 
 ### Error handling ###
 
 if [[ ! -x "$(command -v git)" ]]; then
-# This statment checks if git is intalled on the system. If its not, output an error message.[2]
+# This statement checks if git is intalled on the system. If its not, output an error message.[2]
 # ! is a not condition.[1]
 # -x test if the given path is executable.[1]
 # "$(command -v git)" check if the git command is available and returns it path if found.[2]
@@ -29,21 +32,83 @@ if [[ ! -x "$(command -v git)" ]]; then
   # Ends the script
 fi
 
-if [[ -d "/home/$username/config-files-repo" ]]; then
-# This statment checks if the configuration files exist or not. If it does, output a message and skip the cloning of the repository. 
+echo "Cloning the configuration files repository"
+
+if [[ -d /home/$username/config-files-repo ]]; then
+# This statement checks if the configuration files exist or not. If it does, output a message and skip the cloning of the repository. 
+# -d checks if /home/$username/config-files-repo a directory.[1]
   echo "The configuration files already exist."
 else
   git clone https://gitlab.com/cit2420/2420-as2-starting-files.git /home/$username/config-files-repo
   # Clones the configuration files provided from gitlab repository to the /home/$username/config-files-repo directory.
+  echo "Cloning complete"
 fi
+
+if [[ ! -d /home/$username/bin ]]; then
+# This statement checks if the /home/$username/bin directory exist or not. if it doesn't, create that directory.
+  mkdir /home/$username/bin
+fi
+
+if [[ ! -d /home/$username/.config ]]; then
+# This statement checks if the /home/$username/.config directory exist or not. if it doesn't, create that directory.
+  mkdir /home/$username/.config
+fi
+
 
 ### Main script ###
 
+echo "Creating the symbolic link for files in $dir"
 
-for file in /home/$username/config-files-repo/*; do
+for file in $dir; do
+# Loops through the /home/$username/config-files-repo directory to find the file names. 
   base="${file##*/}"
-  echo "$base"
+  # Storing the file names in the base variable.
+  # ##*/ removes everything up to the last / in the directory path, so it just gives the file name instead of the full file path.[1]
+  case "$base" in
+  # Pattern matching files inside of the variable $base
+    bin)
+    # If the file name is bin. Loop through files inside of bin to create symbolic links
+      for file in $dir/bin/*; do
+      # Loops through the directory of bin in the configuration files and create a symbolic link in the user's ~/bin directory
+        base="${file##*/}"
+        ln -s $file /home/$username/bin
+        # ln creates a link between files.[3]
+        # -s creates a symbolic link.[3]
+        echo "Created a symbolic link for the $base file in /home/$username/bin"
+      done
+      ;;
+    config)
+    # If the file name is config. Loop through files inside of config to create symbolic links
+      for file in $dir/config/*; do
+      # Loops through the directory of config in the configuration files and create a symbolic link in the user's ~/.config directory
+        base="${file##*/}"
+        ln -s $file /home/$username/.config
+        echo "Created a symbolic link for the $base file in /home/$username/.config"
+      done
+      ;;
+    home)
+    # If the file name is home. Loop through files inside of home to create symbolic links
+      rm -rf /home/$username/.bashrc
+      # the ~/.bashrc already exist so we need to remove it first.
+      for file in $dir/home/*; do
+      # Loops through the directory of home in the configuration files and create a symbolic link in the user's ~/.bashrc directory
+        base="${file##*/}"
+        ln -s $file /home/$username/.bashrc
+        echo "Created a symbolic link for the $base file in /home/$username/.bashrc"
+      done
+      ;;
+    README.md)
+    # ignoring this file.
+      ;;
+    *)
+    # If a file name doesn't match with any cases output an error.
+      echo "Error:The file name $base does not match with the cases in the ./sym-links script"
+      exit 1
+    ;;
+  esac
 done
+
+echo "Symbolic link setup is complete!"
 
 
 
