@@ -13,6 +13,10 @@
 # [4]https://www.geeksforgeeks.org/getent-command-in-linux-with-examples/
 # [5]https://www.kevinguay.com/posts/next-uid-gid/
 # [6]https://stackoverflow.com/questions/10586153/how-to-split-a-string-into-an-array-in-bash
+# [7]https://man.archlinux.org/man/chown.1.en#:~:text=chown%20changes%20the%20user%20and,files'%20group%20is%20not%20changed.
+# [8]https://linuxize.com/post/bash-heredoc/
+# [9]https://tldp.org/LDP/sag/html/adduser.html
+# [10]https://www.geeksforgeeks.org/sed-command-in-linux-unix-with-examples/
 
 
 
@@ -23,7 +27,6 @@ shell="/bin/bash"
 
 group="wheel"
 # the defualt group variable
-
 
 ### Error handling ###
 
@@ -93,6 +96,7 @@ while getopts ":u:s:g:h" opt; do
     g)
       # The g option specify a group the user want to add. 
       groups=$OPTARG
+      ;;
     h) 
       # The h option will output the help message to show user the options for this script.
       help
@@ -141,17 +145,37 @@ gid=$(cat /etc/group | cut -d ":" -f 3 | grep "^1...$" | sort -n | tail -n 1 | a
 # awk '{ print $1+1 }' increments the highest ID found by 1, providing the next available UID or GID that starts with 1.[5]
 
 cat >> /etc/passwd <<- EOF
-$username:x:$uid:$gid::home/$username:$shell
+$username:x:$uid:$gid::/home/$username:$shell
 EOF
-# Adding user info to the /etc/passwd file
+# Adding user info to the /etc/passwd file using heredoc.[8]
+# cat >> /etc/passwd read and append to the file /etc/passwd.[8]
+# <<- EOF tells the shell to read input until it encounters the delimiter EOF.[8]
+# $username:x:$uid:$gid::$home:$shell is the content being appended to the /etc/passwd file.[9]
+# EOF end of the input for the heredoc.[8]
 
 cat >> /etc/group <<- EOF
 $username:x:$gid:
 EOF
-# Adding user group to the /etc/group file
+# Same as above but appending to /etc/group file
 
-cp -r /etc/skel/. "/home/$new_user/"
-# Copies the content of the /etc/skel into user's home directory
+
+if [[ ! -d /home/$username ]]; then
+# Creating the new user's home directory if it doesn't exist.
+  mkdir /home/$username
+  echo "Created /home/$username directory."
+else
+  echo "Directory already exist."
+fi
+
+
+chown -R "$username:$gid" "/home/$username"
+# Changing the ownership of the user's home directory to the new user.[9]
+# -R operate on files and directories recursively.[7]
+chown -R 755 "/home/$username"
+# Changing the permissions to give the new user full access.[9]
+cp -r /etc/skel/. "/home/$username"
+# Copies the content of the /etc/skel into user's home directory.
+
 
 IFS=',' read -r -a group_array <<< "$groups"
 # Seperate the groups string into an array by comma.[6]
@@ -159,20 +183,27 @@ IFS=',' read -r -a group_array <<< "$groups"
 # read -r -a group_array <<< "$groups" reads the $groups string and seperate the string by comma it, then store it into an array called group_array.[6]
 
 
-
-for g in "${group_array[@]}"; do
-# looping through the groups entered by the user
-  group_name=$(grep "^$g:" /etc/group)
-  # Search for the group in the /etc/group file
-  # using grep to search for lines in the /etc/group file that start with the group name stored in g
-  # ^ means the start of the line
-  if [[ -z "${group_name}" ]]; then
-  # checking if the variable group_name is empty.
-    sed -i "/$group/c ${group}$username" /etc/group
-  else
-    sed -i "/$group_name/c ${group_name},$username" /etc/group
-  fi
-done
+if [[ ! -z $groups ]]; then
+# check if the user input a group for the g option.
+  for g in "${group_array[@]}"; do
+  # looping through the groups entered by the user
+    group_name=$(grep "^$g:" /etc/group)
+    # Search for the group in the /etc/group file
+    # using grep to search for lines in the /etc/group file that start with the group name stored in g
+    # ^ means the start of the line
+    if [[ ! -z "${group_name}" ]]; then
+    # checking if the variable group_name is empty. If not empty means the group already exist. So we add the new user the that group.
+      sed -i "s/$group_name/$group_name$username/" /etc/group
+      # using sed to edit the text in the file /etc/group.[9]
+      # -i edit the file in place without printing to the console.[9]
+      # "s/$group_name/$group_name,$username/" finds the $group_name and replaces the $group_name with $group_name,$username.[9]
+      # /etc/group is the file we are editing.[9]
+    fi
+  done
+else
+  sed -i "s/$group/$group,$username/" /etc/group
+  # Adding the user to the wheel group if new user didn't use the g option.
+fi
 
 passwd $username
 #creating a password for the new user
