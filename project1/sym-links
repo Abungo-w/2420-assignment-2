@@ -1,15 +1,49 @@
 #!/bin/bash
 
 #: Filename     : sym-links
-#: Description  : This script creates symbolic links from the provided configuration files
+#: Description  : This script creates symbolic links from the provided configuration files.
 #: Author       : Hai Wu
 #: Date         : Nov 09 2024
 #: Version      : 1.0
 
 #: References :
+# [1]https://devhints.io/bash#conditionals
+# [2]https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
+
+### Variables ###
+
+username=$1
+# Storing the first argument passed into this script in the username variable
+# Using the ./setup script will automatically pass in the user's username as the first argument to this script.
+
+### Error handling ###
+
+if [[ ! -x "$(command -v git)" ]]; then
+# This statment checks if git is intalled on the system. If its not, output an error message.[2]
+# ! is a not condition.[1]
+# -x test if the given path is executable.[1]
+# "$(command -v git)" check if the git command is available and returns it path if found.[2]
+  echo 'Error: git is not installed. Need git to run this file.'
+  # Error message
+  exit 1
+  # Ends the script
+fi
+
+if [[ -d "/home/$username/config-files-repo" ]]; then
+# This statment checks if the configuration files exist or not. If it does, output a message and skip the cloning of the repository. 
+  echo "The configuration files already exist."
+else
+  git clone https://gitlab.com/cit2420/2420-as2-starting-files.git /home/$username/config-files-repo
+  # Clones the configuration files provided from gitlab repository to the /home/$username/config-files-repo directory.
+fi
+
+### Main script ###
 
 
-git clone https://gitlab.com/cit2420/2420-as2-starting-files.git
-# Clones the configuration files from gitlab
+for file in /home/$username/config-files-repo/; do
+  base="${base##*/}"
+  echo "$base"
+done
+
 
 
