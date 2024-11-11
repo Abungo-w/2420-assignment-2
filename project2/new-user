@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#: Filename     : new-user
+#: Description  : This script creates a new user with a specified shell, a home directory, contents of /etc/skel in the home directory, and group configuration.
+#: Author       : Hai Wu
+#: Date         : Nov 10 2024
+#: Version      : 1.0
+
+#: References :
+
+
+### Error handling ###
+
