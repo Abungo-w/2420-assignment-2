@@ -54,6 +54,10 @@ if [[ ! -d /home/$username/.config ]]; then
   mkdir /home/$username/.config
 fi
 
+rm /home/$username/.bashrc
+# removin the .bashrc file since it already exist.
+
+
 ### Main script ###
 
 echo "Creating the symbolic link for files in $dir"
@@ -67,31 +71,29 @@ for dir in $repo_dir; do
   # Pattern matching files inside of the variable $base
     bin)
     # If the file name is bin. Loop through files inside of bin to create symbolic links
-      for script in $dir/bin/*; do
+      for script in $dir/*; do
       # Loops through the directory of bin in the configuration files and create a symbolic link in the user's ~/bin directory
-        base="${file##*/}"
         ln -s $script /home/$username/bin
         # ln creates a link between files.[3]
         # -s creates a symbolic link.[3]
-        echo "Created a symbolic link for the $base file in /home/$username/bin"
+        echo "Created a symbolic link from the $base file in /home/$username/bin"
       done
       ;;
     config)
     # If the file name is config. Loop through files inside of config to create symbolic links
-      for config in $dir/config/*; do
+      for config in $dir/*; do
       # Loops through the directory of config in the configuration files and create a symbolic link in the user's ~/.config directory
-        base="${file##*/}"
         ln -s $config /home/$username/.config
-        echo "Created a symbolic link for the $base file in /home/$username/.config"
+        echo "Created a symbolic link from the $base file in /home/$username/.config"
       done
       ;;
     home)
     # If the file name is home. Loop through files inside of home to create symbolic links
-      for file in $dir/home/*; do
+      for file in $dir/*; do
       # Loops through the directory of home in the configuration files and create a symbolic link in the user's ~/.bashrc directory
         base="${file##*/}"
         ln -s $file /home/$username/.$base
-        echo "Created a symbolic link for the $base file in /home/$username/.bashrc"
+        echo "Created a symbolic link from the $base file in /home/$username/.bashrc"
       done
       ;;
     README.md)
