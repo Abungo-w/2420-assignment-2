@@ -74,7 +74,7 @@ help() {
 
 ### Main script ###
 
-while getopts "ilh" opt; do
+while getopts ":ilh" opt; do
 # Using getopts to handle custom options for the ./setup script.
   case "${opt}" in
   # Using case to match the options user input with.
