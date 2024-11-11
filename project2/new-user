@@ -9,6 +9,12 @@
 #: References :
 # [1]https://www.cyberciti.biz/tips/shell-root-user-check-script.html
 # [2]https://devhints.io/bash#conditionals
+# [3]https://stackoverflow.com/questions/14810684/check-whether-a-user-exists
+# [4]https://www.geeksforgeeks.org/getent-command-in-linux-with-examples/
+# [5]https://www.kevinguay.com/posts/next-uid-gid/
+# [6]https://stackoverflow.com/questions/10586153/how-to-split-a-string-into-an-array-in-bash
+
+
 
 ### variables ###
 
@@ -49,19 +55,18 @@ help() {
   echo ""
   echo "*** Commands for ./new-user script ***"
   echo ""
-  echo "Format: ./new-user [Option(s)]"
+  echo "Format: ./new-user [-u] <username> [-s] <shell> [-g] <group1,group2...>"
   echo ""
   echo "Options:"
   echo ""
-  echo "-u <username>   A username for the new user."
+  echo "-u <username>   A username for the new user. This is required"
   echo ""
   echo "-s <shell>      The default shell for the new user" 
   echo ""
-  echo "-g              Add additional group for the new user"
+  echo "-g <group>      Add additional groups for the new user"
   echo ""
-  echo "-h    Outputs the help menu"
+  echo "-h              Outputs the help menu"
   echo ""
-  echo "Instructions: Run the script by inputing the command './new-user -il' or 'sudo ./new-user -il' if are not the root user for a full setup."
   exit 0
   # Ends the script with no error
 }
@@ -69,5 +74,107 @@ help() {
 
 ### Main script ###
 
-while getopts ":
+while getopts ":u:s:g:h" opt; do
+  case "${opt}" in
+    u)
+      # The u option specify the user's username
+      username=$OPTARG
+      # Storing the $OPTARG to the username variable
+      ;;
+    s)
+      # The s option specify the users defualt shell
+      shell=$OPTARG
+      if [[ ! -e $shell ]]; then
+      # Checking if the shell exist
+        echo "The shell you input does not exist."
+        exit 1
+      fi
+      ;;
+    g)
+      # The g option specify a group the user want to add. 
+      groups=$OPTARG
+    h) 
+      # The h option will output the help message to show user the options for this script.
+      help
+      # Calling the help function earlier in the script.
+      ;;
+    :)
+      # For when the user use an option but didn't pass in an argurment for the option.
+      echo "Error: Option is missing an argument. Enter ./new-user -h for help."
+      exit 1
+      ;;
+    *)
+      # For when the user uses an option that doesn't exist.
+      echo "Error: The Option you input doesn't exist. Enter ./new-user -h for help."
+      exit 1
+      ;;
+  esac
+done
 
+if [[ -z "$username" ]]; then
+# Checking if the username is empty
+  echo "You need to use the -u option and input a username. Enter ./new-user -h for help."
+  # Error message
+  exit 1
+fi
+
+
+if getent passwd "$username" > /dev/null; then
+# checking if username exist in the system.[3]
+# getent passwd retrieves user account information.[4]
+# > /dev/null throwing the info retrieved to /dev/null instead of stdout.
+  echo "$username is taken."
+  exit 1
+else
+  echo "$username is available."
+fi
+
+
+uid=$(cat /etc/passwd | cut -d ":" -f 3 | grep "^1...$" | sort -n | tail -n 1 | awk '{ print $1+1 }')
+gid=$(cat /etc/group | cut -d ":" -f 3 | grep "^1...$" | sort -n | tail -n 1 | awk '{ print $1+1 }')
+# Both searches for the next availble uid and gid.[5]
+# cat reads the file /etc/passwd and /etc/group.[5]
+# cut -d ":" -f 3 extracts the third field from the output, using : as the delimiter.[5]
+# grep "^1...$" This filters the results to include only those UIDs or GIDs that start with 1 and are exactly four characters long.[5]
+# sort -n sorts the filtered IDs in numerical order.[5]
+# tail -n 1 selects the highest ID from the sorted list.[5]
+# awk '{ print $1+1 }' increments the highest ID found by 1, providing the next available UID or GID that starts with 1.[5]
+
+cat >> /etc/passwd <<- EOF
+$username:x:$uid:$gid::home/$username:$shell
+EOF
+# Adding user info to the /etc/passwd file
+
+cat >> /etc/group <<- EOF
+$username:x:$gid:
+EOF
+# Adding user group to the /etc/group file
+
+cp -r /etc/skel/. "/home/$new_user/"
+# Copies the content of the /etc/skel into user's home directory
+
+IFS=',' read -r -a group_array <<< "$groups"
+# Seperate the groups string into an array by comma.[6]
+# IFS=',' sets the Internal Field Separator to a comma.[6]
+# read -r -a group_array <<< "$groups" reads the $groups string and seperate the string by comma it, then store it into an array called group_array.[6]
+
+
+
+for g in "${group_array[@]}"; do
+# looping through the groups entered by the user
+  group_name=$(grep "^$g:" /etc/group)
+  # Search for the group in the /etc/group file
+  # using grep to search for lines in the /etc/group file that start with the group name stored in g
+  # ^ means the start of the line
+  if [[ -z "${group_name}" ]]; then
+  # checking if the variable group_name is empty.
+    sed -i "/$group/c ${group}$username" /etc/group
+  else
+    sed -i "/$group_name/c ${group_name},$username" /etc/group
+  fi
+done
+
+passwd $username
+#creating a password for the new user
+
+echo "The User $username is created!"
