@@ -17,6 +17,7 @@
 # [8]https://linuxize.com/post/bash-heredoc/
 # [9]https://tldp.org/LDP/sag/html/adduser.html
 # [10]https://www.geeksforgeeks.org/sed-command-in-linux-unix-with-examples/
+# [11]https://www.baeldung.com/linux/bash-extract-first-word#:~:text=Using%20Parameter%20Expansion&text=%E2%80%9C%24%7Bvar%25%25%20*%7D%E2%80%9D,the%20first_word%20on%20the%20terminal
 
 
 
@@ -25,7 +26,7 @@
 shell="/bin/bash"
 # the defualt shell variable
 
-group="wheel"
+groups="wheel"
 # the defualt group variable
 
 ### Error handling ###
@@ -187,22 +188,22 @@ if [[ ! -z $groups ]]; then
 # check if the user input a group for the g option.
   for g in "${group_array[@]}"; do
   # looping through the groups entered by the user
-    group_name=$(grep "^$g:" /etc/group)
-    # Search for the group in the /etc/group file
-    # using grep to search for lines in the /etc/group file that start with the group name stored in g
-    # ^ means the start of the line
+    group_name=$(grep "^$g:" /etc/group | cut -d: -f1)
+    # Search for the group in the /etc/group file. Outputing only the group name.
+    # using grep to search for lines in the /etc/group file that start with the group name stored in g.[11]
+    # ^ means the start of the line.[11]
+    # cut -d tells the cut command to use the : character as a delimiter.[11]
+    # -f1 to display only the first field.[11]
     if [[ ! -z "${group_name}" ]]; then
     # checking if the variable group_name is empty. If not empty means the group already exist. So we add the new user the that group.
-      sed -i "s/$group_name/$group_name$username/" /etc/group
+      sed -i "/^${group_name}:/ s/$/,${username}/" /etc/group
       # using sed to edit the text in the file /etc/group.[9]
       # -i edit the file in place without printing to the console.[9]
       # "s/$group_name/$group_name,$username/" finds the $group_name and replaces the $group_name with $group_name,$username.[9]
       # /etc/group is the file we are editing.[9]
+      echo "Adding user ${username} to group ${group_name}."
     fi
   done
-else
-  sed -i "s/$group/$group,$username/" /etc/group
-  # Adding the user to the wheel group if new user didn't use the g option.
 fi
 
 passwd $username
