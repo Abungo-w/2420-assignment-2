@@ -16,7 +16,7 @@
 username=$1
 # Storing the first argument passed into this script in the username variable
 # Using the ./setup script will automatically pass in the user's username as the first argument to this script.
-dir=/home/$username/config-files-repo/*
+repo_dir=/home/$username/config-files-repo/*
 #storing the config-files-repo directory in the dir variable
 
 ### Error handling ###
@@ -54,24 +54,23 @@ if [[ ! -d /home/$username/.config ]]; then
   mkdir /home/$username/.config
 fi
 
-
 ### Main script ###
 
 echo "Creating the symbolic link for files in $dir"
 
-for file in $dir; do
+for dir in $repo_dir; do
 # Loops through the /home/$username/config-files-repo directory to find the file names. 
-  base="${file##*/}"
+  base="${dir##*/}"
   # Storing the file names in the base variable.
   # ##*/ removes everything up to the last / in the directory path, so it just gives the file name instead of the full file path.[1]
   case "$base" in
   # Pattern matching files inside of the variable $base
     bin)
     # If the file name is bin. Loop through files inside of bin to create symbolic links
-      for file in $dir/bin/*; do
+      for script in $dir/bin/*; do
       # Loops through the directory of bin in the configuration files and create a symbolic link in the user's ~/bin directory
         base="${file##*/}"
-        ln -s $file /home/$username/bin
+        ln -s $script /home/$username/bin
         # ln creates a link between files.[3]
         # -s creates a symbolic link.[3]
         echo "Created a symbolic link for the $base file in /home/$username/bin"
@@ -79,21 +78,19 @@ for file in $dir; do
       ;;
     config)
     # If the file name is config. Loop through files inside of config to create symbolic links
-      for file in $dir/config/*; do
+      for config in $dir/config/*; do
       # Loops through the directory of config in the configuration files and create a symbolic link in the user's ~/.config directory
         base="${file##*/}"
-        ln -s $file /home/$username/.config
+        ln -s $config /home/$username/.config
         echo "Created a symbolic link for the $base file in /home/$username/.config"
       done
       ;;
     home)
     # If the file name is home. Loop through files inside of home to create symbolic links
-      rm -rf /home/$username/.bashrc
-      # the ~/.bashrc already exist so we need to remove it first.
       for file in $dir/home/*; do
       # Loops through the directory of home in the configuration files and create a symbolic link in the user's ~/.bashrc directory
         base="${file##*/}"
-        ln -s $file /home/$username/.bashrc
+        ln -s $file /home/$username/.$base
         echo "Created a symbolic link for the $base file in /home/$username/.bashrc"
       done
       ;;
