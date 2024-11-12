@@ -1,10 +1,10 @@
 # 2420-Assignment-2
-### Table of Contents
+## Table of Contents
 - [Introduction](#introduction)
 - [Project 1](#project-1)
 - [Project 2](#project-2)
 
-### Introduction
+## Introduction
 In this repository, you will find two folders named **project1** and **project2**, each containing shell scripts with distinct functions. **project1** will install packages and set up and new system, and **project2** will allow you to create a new user.
 
 To get started, you need to have git installed in your system.
@@ -18,7 +18,7 @@ git clone https://github.com/Abungo-w/2420-assignment-2.git
 ```
 A folder named 2420-assignment-2 should appear in your home directoy. 
 
-### Project 1
+## Project 1
 Going into the the **project1** folder, you will find 4 files:
 - install-packages: a shell script that will install the packages listed in the _package_ file.
 - packages: a file with a list of packages you will install when you run the _setup_ file with the `-i` option.
@@ -43,7 +43,7 @@ Use the following command for a full setup:
 sudo ./setup -il
 ```
 
-### Project 2
+## Project 2
 Going into the **project2** folder you will find a file named _new-user_.
 The _new-user_ file will create a new user with:
 - a password
