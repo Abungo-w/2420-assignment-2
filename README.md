@@ -25,6 +25,13 @@ Going into the the **project1** folder, you will find 4 files:
 - sym-links: a shell script that clones a configuration file repository and sets up symbolic links in your home directory
 - setup: a shell script that runs _install-packages_ and _sym-links_ scripts
 
+The packages in the _packages_ file:
+- kakoune
+- tmux
+- neovim
+
+**note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
+
 You will need to give executable permission to _install-packages_, _sym-links_, and
 _setup_ in order to run the script.
 Use the following command to give the files permission:
