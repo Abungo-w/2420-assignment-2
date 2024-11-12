@@ -21,14 +21,11 @@ After its done cloning, a folder named 2420-assignment-2 should appear in your h
 ## Project 1
 Going into the the **project1** folder, you will find 4 files:
 - install-packages: a shell script that will install the packages listed in the _package_ file.
-- packages: a file with a list of packages you will install when you run the _setup_ file with the `-i` option.
+- packages: a file with a list of [packages](#installing-packages) you will install when you run the _setup_ file with the `-i` option.
 - sym-links: a shell script that clones a configuration file repository and sets up symbolic links in your home directory
 - setup: a shell script that runs _install-packages_ and _sym-links_ scripts
 
-The packages in the _packages_ file:
-- kakoune
-- tmux
-- neovim
+***Caution**: Do not run any file execpt for **setup**. Weird things might happen!
 
 **note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
 
@@ -40,15 +37,30 @@ chmod +x install-packages sym-links setup
 ```
 ***Caution**: Do not run any file execpt for **setup**. Weird things might happen!
 
+### Running the script
 Now you are ready to run the setup file. Use the following command to see the options you can do with the _setup_ script:
 ```
 sudo ./setup -h
 ```
 **Note**: if you are the root user you don't need to use the sudo command.
+
 Use the following command for a full setup:
 ```
 sudo ./setup -il
 ```
+
+### Installing packages
+The packages you will be installing:
+- kakoune
+- tmux
+- neovim
+
+**note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
+
+Use the following command to only install packages:
+```
+sudo ./setup -i
+``` 
 
 ## Project 2
 Going into the **project2** folder you will find a file named _new-user_.
