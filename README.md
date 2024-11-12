@@ -27,8 +27,6 @@ Going into the the **project1** folder, you will find 4 files:
 
 ***Caution**: Do not run any file execpt for **setup**. Weird things might happen!
 
-**note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
-
 You will need to give executable permission to _install-packages_, _sym-links_, and
 _setup_ in order to run the script.
 Use the following command to give the files permission:
@@ -55,12 +53,24 @@ The packages you will be installing:
 - tmux
 - neovim
 
-**note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
+**Note**: You can add or remove the packages in the _packages_ file you want to install, but do not remove the **kakoune** and **tmux** package. They are required to use the cloned repository configuration files in the config directory.
 
 Use the following command to only install packages:
 ```
 sudo ./setup -i
 ``` 
+
+### Setting up the configuration files
+Use the following command to only set up the configuration file with symbolic links.
+```
+sudo ./setup -l
+```
+You should be able to find the symbolic links to the configuration files in:
+- ~/bin
+- ~/.config
+- ~/.bashrc
+
+**Note**: ~/bin and ~/.config are directories and ~/.bashrc is a file.
 
 ## Project 2
 Going into the **project2** folder you will find a file named _new-user_.
