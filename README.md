@@ -16,7 +16,7 @@ change to your home directory then use the following command to clone the reposi
 ```
 git clone https://github.com/Abungo-w/2420-assignment-2.git
 ```
-A folder named 2420-assignment-2 should appear in your home directoy. 
+After its done cloning, a folder named 2420-assignment-2 should appear in your home directoy. 
 
 ## Project 1
 Going into the the **project1** folder, you will find 4 files:
