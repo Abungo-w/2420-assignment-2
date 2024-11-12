@@ -5,7 +5,7 @@
 - [Project 2](#project-2)
 
 ## Introduction
-In this repository, you will find two folders named **project1** and **project2**, each containing shell scripts with distinct functions. **project1** will install packages and set up and new system, and **project2** will allow you to create a new user.
+In this repository, you will find two folders named **project1** and **project2**, each containing shell scripts with different functions. **project1** will install packages and set up and new system, and **project2** will allow you to create a new user.
 
 To get started, you need to have git installed in your system.
 Use the following command to install git:
