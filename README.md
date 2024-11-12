@@ -25,7 +25,7 @@ Going into the the **project1** folder, you will find 4 files:
 - sym-links: a shell script that clones a configuration file repository and sets up symbolic links in your home directory
 - setup: a shell script that runs _install-packages_ and _sym-links_ scripts
 
-***Caution**: Do not run any file execpt for **setup**. Weird things might happen!
+***Caution**: Do not run any file execpt for _setup_. Weird things might happen!
 
 You will need to give executable permission to _install-packages_, _sym-links_, and
 _setup_ in order to run the script.
@@ -33,7 +33,6 @@ Use the following command to give the files permission:
 ```
 chmod +x install-packages sym-links setup
 ```
-***Caution**: Do not run any file execpt for **setup**. Weird things might happen!
 
 ### Running the script
 Now you are ready to run the setup file. Use the following command to see the options you can do with the _setup_ script:
